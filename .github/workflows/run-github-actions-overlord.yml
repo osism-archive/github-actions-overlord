@@ -1,0 +1,37 @@
+---
+name: Run github actions overlord
+
+"on":
+  workflow_dispatch:
+  schedule:
+    - cron: "*/15 * * * *"
+  push:
+    branches:
+      - main
+
+jobs:
+  run-github-actions-overlord:
+    if: github.repository == 'osism/github-actions-overlord'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+
+      - name: Setup Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: "3.9"
+
+      - name: Install pipenv
+        run: |
+          python3 -m pip install --upgrade pipenv wheel
+
+      - name: Install requirements
+        run: |
+          pipenv install --deploy
+
+      - name: Run the overlord
+        run: |
+          pipenv run python3 main.py
+        env:
+          GH_ACCESS_TOKEN: ${{ secrets.GH_ACCESS_TOKEN }}

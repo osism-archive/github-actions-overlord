@@ -1,0 +1,48 @@
+---
+release:
+  container-images-kolla:
+    - Update release submodule
+  cfg-generics:
+    - Update images
+
+ansible-collection-commons:
+  container-image-osism-ansible:
+    - Build container image
+
+ansible-collection-services:
+  container-image-osism-ansible:
+    - Build container image
+
+ansible-collection-validations:
+  container-image-osism-ansible:
+    - Build container image
+
+ansible-playbooks:
+  container-image-osism-ansible:
+    - Build container image
+
+kolla-operations:
+  container-image-kolla-ansible:
+    - Build container image
+
+ansible-defaults:
+  container-image-osism-ansible:
+    - Build container image
+  container-image-inventory-reconciler:
+    - Build container image
+
+cfg-generics:
+  testbed:
+    - Update images
+  container-image-inventory-reconciler:
+    - Build container image
+
+python-osism:
+  container-image-ceph-ansible:
+    - Build container image
+  container-image-inventory-reconciler:
+    - Build container image
+  container-image-kolla-ansible:
+    - Build container image
+  container-image-osism-ansible:
+    - Build container image
