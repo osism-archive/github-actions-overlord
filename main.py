@@ -3,7 +3,6 @@ import logging
 import os
 import pytz
 
-import feedparser
 from github import Github
 import yaml
 
@@ -13,14 +12,13 @@ GITHUB_TOKEN = os.environ.get("GH_ACCESS_TOKEN", None)
 GITHUB_ORGANISATION = "osism"
 g = Github(GITHUB_TOKEN)
 
-utc = pytz.UTC
-
 # Get the timestamp of the last cron run
 repo = g.get_repo("osism/github-actions-overlord")
 for w in repo.get_workflows():
     if w.name == "Run github actions overlord":
         for r in w.get_runs(branch="main"):
-            t_last_run = utc.localize(r.created_at)
+            t_last_run = r.created_at.replace(tzinfo=pytz.UTC)
+            t_last_run = t_last_run.astimezone(pytz.timezone("Europe/Berlin"))
             break
 
 logging.info(f"Last run: {t_last_run}")
@@ -32,12 +30,13 @@ with open("config.yaml") as fp:
 for r in d:
     handle_reactions = False
 
-    b = "main"
-    logging.info(f"Fetching feed {GITHUB_ORGANISATION}/{r}/commits/{b}.atom")
-    f = feedparser.parse(f"https://github.com/{GITHUB_ORGANISATION}/{r}/commits/{b}.atom")
-    for entry in f['entries']:
-        t_updated = parser.parse(entry['updated'])
-        logging.info(f"Last commit on {b} in {GITHUB_ORGANISATION}/{r}: {t_updated}")
+    branch = "main"
+
+    repo = g.get_repo(f"{GITHUB_ORGANISATION}/{r}")
+
+    for c in repo.get_commits(sha=branch):
+        t_updated = parser.parse(c.last_modified)
+        logging.info(f"Last commit on {branch} in {GITHUB_ORGANISATION}/{r}: {t_updated}")
 
         if t_updated > t_last_run:
             handle_reactions = True
