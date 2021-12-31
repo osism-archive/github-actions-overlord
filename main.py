@@ -32,13 +32,17 @@ with open("config.yaml") as fp:
 for r in d:
     handle_reactions = False
 
-    logging.info(f"Fetching feed {GITHUB_ORGANISATION}/{r}/commits/main.atom")
-    f = feedparser.parse(f"https://github.com/{GITHUB_ORGANISATION}/{r}/commits/main.atom")
+    b = "main"
+    logging.info(f"Fetching feed {GITHUB_ORGANISATION}/{r}/commits/{b}.atom")
+    f = feedparser.parse(f"https://github.com/{GITHUB_ORGANISATION}/{r}/commits/{b}.atom")
     for entry in f['entries']:
         t_updated = parser.parse(entry['updated'])
+        logging.info(f"Last commit on {b} in {GITHUB_ORGANISATION}/{r}: {t_updated}")
 
         if t_updated > t_last_run:
             handle_reactions = True
+
+        break
 
     if handle_reactions:
         logging.info(f"Checking {r} for reactions")
