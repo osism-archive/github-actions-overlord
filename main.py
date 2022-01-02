@@ -17,8 +17,8 @@ repo = g.get_repo("osism/github-actions-overlord")
 for w in repo.get_workflows():
     if w.name == "Run github actions overlord":
         for r in w.get_runs(branch="main"):
-            t_last_run = r.created_at.replace(tzinfo=pytz.UTC)
-            t_last_run = t_last_run.astimezone(pytz.timezone("Europe/Berlin"))
+            t_last_run = r.created_at.astimezone(pytz.timezone("Europe/Berlin"))
+            t_last_run = t_last_run.replace(tzinfo=None)
             break
 
 logging.info(f"Last run: {t_last_run}")
@@ -36,6 +36,7 @@ for r in d:
 
     for c in repo.get_commits(sha=branch):
         t_updated = parser.parse(c.last_modified)
+        t_updated = t_updated.replace(tzinfo=None)
         logging.info(f"Last commit on {branch} in {GITHUB_ORGANISATION}/{r}: {t_updated}")
 
         if t_updated > t_last_run:
