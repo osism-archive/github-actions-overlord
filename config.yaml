@@ -1,4 +1,8 @@
 ---
+netbox-plugin-osism:
+  container-images:
+    - Build netbox container image
+
 release:
   container-images-kolla:
     - Update release submodule
